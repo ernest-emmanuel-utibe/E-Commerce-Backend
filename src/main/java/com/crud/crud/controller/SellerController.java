@@ -4,6 +4,11 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.crud.crud.data.dto.SellerDto;
+import com.crud.crud.data.dto.SessionDto;
+import com.crud.crud.data.models.Seller;
+import com.crud.crud.service.SellerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class SellerController {
-    @Autowired
-    private SellerService sService;
+//    @Autowired
+    private final SellerService sellerService;
 
 
     //Add seller-------------------------------------
@@ -30,7 +35,7 @@ public class SellerController {
     @PostMapping("/addseller")
     public ResponseEntity<Seller> addSellerHandler(@Valid @RequestBody Seller seller){
 
-        Seller addseller=sService.addSeller(seller);
+        Seller addseller=sellerService.addSeller(seller);
 
         System.out.println("Seller"+ seller);
 
@@ -45,7 +50,7 @@ public class SellerController {
     @GetMapping("/sellers")
     public ResponseEntity<List<Seller>> getAllSellerHandler(){
 
-        List<Seller> sellers=sService.getAllSellers();
+        List<Seller> sellers=sellerService.getAllSellers();
 
         return new ResponseEntity<List<Seller>>(sellers, HttpStatus.OK);
     }
@@ -57,7 +62,7 @@ public class SellerController {
     @GetMapping("/seller/{sellerId}")
     public ResponseEntity<Seller> getSellerByIdHandler(@PathVariable("sellerId") Integer Id){
 
-        Seller getSeller=sService.getSellerById(Id);
+        Seller getSeller=sellerService.getSellerById(Id);
 
         return new ResponseEntity<Seller>(getSeller, HttpStatus.OK);
     }
@@ -68,7 +73,7 @@ public class SellerController {
     @GetMapping("/seller")
     public ResponseEntity<Seller> getSellerByMobileHandler(@RequestParam("mobile") String mobile, @RequestHeader("token") String token){
 
-        Seller getSeller=sService.getSellerByMobile(mobile, token);
+        Seller getSeller=sellerService.getSellerByMobile(mobile, token);
 
         return new ResponseEntity<Seller>(getSeller, HttpStatus.OK);
     }
@@ -79,7 +84,7 @@ public class SellerController {
     @GetMapping("/seller/current")
     public ResponseEntity<Seller> getLoggedInSellerHandler(@RequestHeader("token") String token){
 
-        Seller getSeller = sService.getCurrentlyLoggedInSeller(token);
+        Seller getSeller = sellerService.getCurrentlyLoggedInSeller(token);
 
         return new ResponseEntity<Seller>(getSeller, HttpStatus.OK);
     }
@@ -89,7 +94,7 @@ public class SellerController {
 
     @PutMapping("/seller")
     public ResponseEntity<Seller> updateSellerHandler(@RequestBody Seller seller, @RequestHeader("token") String token){
-        Seller updatedseller=sService.updateSeller(seller, token);
+        Seller updatedseller=sellerService.updateSeller(seller, token);
 
         return new ResponseEntity<Seller>(updatedseller,HttpStatus.ACCEPTED);
 
@@ -97,8 +102,8 @@ public class SellerController {
 
 
     @PutMapping("/seller/update/mobile")
-    public ResponseEntity<Seller> updateSellerMobileHandler(@Valid @RequestBody SellerDTO sellerdto, @RequestHeader("token") String token){
-        Seller updatedseller=sService.updateSellerMobile(sellerdto, token);
+    public ResponseEntity<Seller> updateSellerMobileHandler(@Valid @RequestBody SellerDto sellerdto, @RequestHeader("token") String token){
+        Seller updatedseller=sellerService.updateSellerMobile(sellerdto, token);
 
         return new ResponseEntity<Seller>(updatedseller,HttpStatus.ACCEPTED);
 
@@ -106,15 +111,15 @@ public class SellerController {
 
 
     @PutMapping("/seller/update/password")
-    public ResponseEntity<SessionDTO> updateSellerPasswordHandler(@Valid @RequestBody SellerDTO sellerDto, @RequestHeader("token") String token){
-        return new ResponseEntity<>(sService.updateSellerPassword(sellerDto, token), HttpStatus.ACCEPTED);
+    public ResponseEntity<SessionDto> updateSellerPasswordHandler(@Valid @RequestBody SellerDto sellerDto, @RequestHeader("token") String token){
+        return new ResponseEntity<>(sellerService.updateSellerPassword(sellerDto, token), HttpStatus.ACCEPTED);
     }
 
 
     @DeleteMapping("/seller/{sellerId}")
     public ResponseEntity<Seller> deleteSellerByIdHandler(@PathVariable("sellerId") Integer Id, @RequestHeader("token") String token){
 
-        Seller deletedSeller=sService.deleteSellerById(Id, token);
+        Seller deletedSeller=sellerService.deleteSellerById(Id, token);
 
         return new ResponseEntity<Seller>(deletedSeller,HttpStatus.OK);
 
