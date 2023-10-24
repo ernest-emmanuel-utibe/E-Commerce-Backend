@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ProductDto {
     private String prodName;
-    private String manufaturer;
+    private String manufacturer;
     private Double price;
     private Integer quantity;
 }

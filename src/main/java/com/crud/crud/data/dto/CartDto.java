@@ -1,4 +1,5 @@
 package com.crud.crud.data.dto;
+
 import javax.validation.constraints.*;
 
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class CartDto {
     @NotNull
-    private Integer productId;
+    private Long productId;
 
     private String productName;
 

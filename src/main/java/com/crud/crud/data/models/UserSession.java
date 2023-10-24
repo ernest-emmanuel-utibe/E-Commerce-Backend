@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class UserSession {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer sessionId;
+    private Long sessionId;
 
     @Column(unique = true)
     private String token;

@@ -1,10 +1,13 @@
 package com.crud.crud.service;
 
-public interface CartService {
-    public Cart addProductToCart(CartDTO cart, String token) throws CartItemNotFound;
-    public Cart getCartProduct(String token);
-    public Cart removeProductFromCart(CartDTO cartDto,String token) throws ProductNotFound;
-//	public Cart changeQuantity(Product product,Customer customer,Integer quantity);
+import com.crud.crud.data.dto.CartDto;
+import com.crud.crud.data.models.Cart;
+import com.crud.crud.exception.CartItemNotFoundException;
+import com.crud.crud.exception.ProductNotFoundException;
 
+public interface CartService {
+    public Cart addProductToCart(CartDto cart, String token) throws CartItemNotFoundException;
+    public Cart getCartProduct(String token);
+    public Cart removeProductFromCart(CartDto cartDto,String token) throws ProductNotFoundException;
     public Cart clearCart(String token);
 }

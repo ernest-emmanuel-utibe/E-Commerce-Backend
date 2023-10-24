@@ -23,7 +23,7 @@ import lombok.ToString;
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer cartItemId;
+    private Long cartItemId;
 
 
     @OneToOne

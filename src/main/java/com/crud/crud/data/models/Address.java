@@ -2,8 +2,6 @@ package com.crud.crud.data.models;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +28,7 @@ import lombok.ToString;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer addressId;
+    private Long addressId;
 
     @Pattern(regexp = "[A-Za-z0-9\\s-]{3,}", message = "Not a valid street no")
     private String streetNo;
@@ -49,9 +47,9 @@ public class Address {
     @NotNull(message = "State name cannot be null")
     private String state;
 
-    @NotNull(message = "Pincode cannot be null")
-    @Pattern(regexp = "[0-9]{6}", message = "Pincode not valid. Must be 6 digits")
-    private String pincode;
+    @NotNull(message = "Pin code cannot be null")
+    @Pattern(regexp = "[0-9]{6}", message = "Pin code not valid. Must be 6 digits")
+    private String pinCode;
 
 
     @ManyToOne(cascade = CascadeType.ALL)

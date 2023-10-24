@@ -2,8 +2,12 @@ package com.crud.crud.controller;
 
 import java.util.List;
 
+import com.crud.crud.data.dto.CartDto;
+import com.crud.crud.data.models.Cart;
+import com.crud.crud.data.repository.CartDao;
+import com.crud.crud.data.repository.CustomerDao;
+import com.crud.crud.service.CartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,12 +27,12 @@ public class CartController {
 //    @Autowired
     private final CartDao cartDao;
 
-    @Autowired
-    private CustomerDao customerDao;
+//    @Autowired
+    private final CustomerDao customerDao;
 
 
     @PostMapping(value = "/cart/add")
-    public ResponseEntity<Cart> addProductToCartHander(@RequestBody CartDTO cartdto ,@RequestHeader("token")String token){
+    public ResponseEntity<Cart> addProductToCartHander(@RequestBody CartDto cartdto , @RequestHeader("token")String token){
 
         Cart cart = cartService.addProductToCart(cartdto, token);
         return new ResponseEntity<Cart>(cart,HttpStatus.CREATED);
@@ -42,7 +46,7 @@ public class CartController {
 
 
     @DeleteMapping(value = "/cart")
-    public ResponseEntity<Cart> removeProductFromCartHander(@RequestBody CartDTO cartdto ,@RequestHeader("token")String token){
+    public ResponseEntity<Cart> removeProductFromCartHander(@RequestBody CartDto cartdto ,@RequestHeader("token")String token){
 
         Cart cart = cartService.removeProductFromCart(cartdto, token);
         return new ResponseEntity<Cart>(cart,HttpStatus.OK);

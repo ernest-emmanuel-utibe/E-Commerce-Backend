@@ -33,7 +33,7 @@ import lombok.ToString;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer productId;
+    private Long productId;
 
     @NotNull
     @Size(min = 3, max = 30, message = "Product name size should be between 3-30")

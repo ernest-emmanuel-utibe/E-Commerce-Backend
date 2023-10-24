@@ -1,34 +1,54 @@
 package com.crud.crud.service.impl;
 
+import com.crud.crud.data.dto.CartDto;
+import com.crud.crud.data.models.Cart;
+import com.crud.crud.data.models.CartItem;
+import com.crud.crud.data.models.Customer;
+import com.crud.crud.data.models.UserSession;
+import com.crud.crud.data.repository.CartDao;
+import com.crud.crud.data.repository.CustomerDao;
+import com.crud.crud.data.repository.ProductDao;
+import com.crud.crud.data.repository.SessionDao;
+import com.crud.crud.exception.CartItemNotFoundException;
+import com.crud.crud.exception.CustomerNotFoundException;
+import com.crud.crud.exception.LoginException;
+import com.crud.crud.exception.ProductNotFoundException;
+import com.crud.crud.service.CartItemService;
 import com.crud.crud.service.CartService;
+import com.crud.crud.service.LoginLogoutService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Service
+@RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
-    @Autowired
-    private CartDao cartDao;
+//    @Autowired
+    private final CartDao cartDao;
 
-    @Autowired
-    private SessionDao sessionDao;
+//    @Autowired
+    private final SessionDao sessionDao;
 
-    @Autowired
-    private CartItemService cartItemService;
-
-
-    @Autowired
-    private CustomerDao customerDao;
-
-    @Autowired
-    private LoginLogoutService loginService;
+//    @Autowired
+    private final CartItemService cartItemService;
 
 
-    @Autowired
-    private ProductDao productDao;
+//    @Autowired
+    private final CustomerDao customerDao;
+
+//    @Autowired
+    private final LoginLogoutService loginService;
+
+
+//    @Autowired
+    private final ProductDao productDao;
+
 
     @Override
-    public Cart addProductToCart(CartDTO cartDto, String token) {
-
-
+    public Cart addProductToCart(CartDto cartDto, String token) throws CartItemNotFoundException {
         if(token.contains("customer") == false) {
             throw new LoginException("Invalid session token for customer");
         }
@@ -48,7 +68,7 @@ public class CartServiceImpl implements CartService {
 
         List<CartItem> cartItems = customerCart.getCartItems();
 
-        CartItem item = cartItemService.createItemforCart(cartDto);
+        CartItem item = cartItemService.createItemForCart(cartDto);
 
 
         if(cartItems.size() == 0) {
@@ -71,11 +91,7 @@ public class CartServiceImpl implements CartService {
         }
 
         return cartDao.save(existingCustomer.getCustomerCart());
-
-
     }
-
-
 
     @Override
     public Cart getCartProduct(String token) {
@@ -98,11 +114,6 @@ public class CartServiceImpl implements CartService {
 
         Customer existingCustomer = opt.get();
 
-//		System.out.println(existingCustomer);
-//
-//		System.out.println(existingCustomer.getCustomerCart());
-//
-//		System.out.println("Here reached");
 //
         Integer cartId = existingCustomer.getCustomerCart().getCartId();
 
@@ -110,7 +121,7 @@ public class CartServiceImpl implements CartService {
         Optional<Cart> optCart= cartDao.findById(cartId);
 
         if(optCart.isEmpty()) {
-            throw new CartItemNotFound("cart Not found by Id");
+            throw new CartItemNotFoundException("cart Not found by Id");
         }
 //		return optCart.get().getProducts();
 
@@ -118,10 +129,8 @@ public class CartServiceImpl implements CartService {
 //		return cart.getProducts();
     }
 
-
-
     @Override
-    public Cart removeProductFromCart(CartDTO cartDto, String token) {
+    public Cart removeProductFromCart(CartDto cartDto, String token) throws ProductNotFoundException {
         if(token.contains("customer") == false) {
             throw new LoginException("Invalid session token for customer");
         }
@@ -142,7 +151,7 @@ public class CartServiceImpl implements CartService {
         List<CartItem> cartItems = customerCart.getCartItems();
 
         if(cartItems.size() == 0) {
-            throw new CartItemNotFound("Cart is empty");
+            throw new CartItemNotFoundException("Cart is empty");
         }
 
 
@@ -166,12 +175,12 @@ public class CartServiceImpl implements CartService {
         }
 
         if(!flag) {
-            throw new CartItemNotFound("Product not added to cart");
+            throw new CartItemNotFoundException("Product not added to cart");
         }
 
         if(cartItems.size() == 0) {
             cartDao.save(customerCart);
-            throw new CartItemNotFound("Cart is empty now");
+            throw new CartItemNotFoundException("Cart is empty now");
         }
 
         return cartDao.save(customerCart);
@@ -203,7 +212,7 @@ public class CartServiceImpl implements CartService {
         Cart customerCart = existingCustomer.getCustomerCart();
 
         if(customerCart.getCartItems().size() == 0) {
-            throw new CartItemNotFound("Cart already empty");
+            throw new CartItemNotFoundException("Cart already empty");
         }
 
         List<CartItem> emptyCart = new ArrayList<>();

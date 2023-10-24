@@ -8,7 +8,6 @@ import com.crud.crud.data.dto.SellerDto;
 import com.crud.crud.data.dto.SessionDto;
 import com.crud.crud.data.models.Seller;
 import com.crud.crud.service.SellerService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,9 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class SellerController {
 //    @Autowired
     private final SellerService sellerService;
-
-
-    //Add seller-------------------------------------
 
     @PostMapping("/addseller")
     public ResponseEntity<Seller> addSellerHandler(@Valid @RequestBody Seller seller){

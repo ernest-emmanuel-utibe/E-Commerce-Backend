@@ -4,8 +4,11 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.crud.crud.data.dto.ProductDto;
+import com.crud.crud.data.models.CategoryEnum;
+import com.crud.crud.data.models.Product;
+import com.crud.crud.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class ProductController {
-    @Autowired
-    private ProductService pService;
+//    @Autowired
+    private final ProductService productService;
 
     // this method adds new product to catalog by seller(if seller is new it adds
     // seller as well
@@ -32,7 +35,7 @@ public class ProductController {
     public ResponseEntity<Product> addProductToCatalogHandler(@RequestHeader("token") String token,
                                                               @Valid @RequestBody Product product) {
 
-        Product prod = pService.addProductToCatalog(token, product);
+        Product prod = productService.addProductToCatalog(token, product);
 
         return new ResponseEntity<Product>(prod, HttpStatus.ACCEPTED);
 
@@ -44,7 +47,7 @@ public class ProductController {
     @GetMapping("/product/{id}")
     public ResponseEntity<Product> getProductFromCatalogByIdHandler(@PathVariable("id") Integer id) {
 
-        Product prod = pService.getProductFromCatalogById(id);
+        Product prod = productService.getProductFromCatalogById(id);
 
         return new ResponseEntity<Product>(prod, HttpStatus.FOUND);
 
@@ -57,14 +60,14 @@ public class ProductController {
     @DeleteMapping("/product/{id}")
     public ResponseEntity<String> deleteProductFromCatalogHandler(@PathVariable("id") Integer id) {
 
-        String res = pService.deleteProductFromCatalog(id);
+        String res = productService.deleteProductFromCatalog(id);
         return new ResponseEntity<String>(res, HttpStatus.OK);
     }
 
     @PutMapping("/products")
     public ResponseEntity<Product> updateProductInCatalogHandler(@Valid @RequestBody Product prod) {
 
-        Product prod1 = pService.updateProductIncatalog(prod);
+        Product prod1 = productService.updateProductIncatalog(prod);
 
         return new ResponseEntity<Product>(prod1, HttpStatus.OK);
 
@@ -73,43 +76,43 @@ public class ProductController {
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getAllProductsHandler() {
 
-        List<Product> list = pService.getAllProductsIncatalog();
+        List<Product> list = productService.getAllProductsIncatalog();
 
         return new ResponseEntity<List<Product>>(list, HttpStatus.OK);
     }
 
     //this method gets the products mapped to a particular seller
     @GetMapping("/products/seller/{id}")
-    public ResponseEntity<List<ProductDTO>> getAllProductsOfSellerHandler(@PathVariable("id") Integer id) {
+    public ResponseEntity<List<ProductDto>> getAllProductsOfSellerHandler(@PathVariable("id") Integer id) {
 
-        List<ProductDTO> list = pService.getAllProductsOfSeller(id);
+        List<ProductDto> list = productService.getAllProductsOfSeller(id);
 
-        return new ResponseEntity<List<ProductDTO>>(list, HttpStatus.OK);
+        return new ResponseEntity<List<ProductDto>>(list, HttpStatus.OK);
     }
 
     @GetMapping("/products/{catenum}")
-    public ResponseEntity<List<ProductDTO>> getAllProductsInCategory(@PathVariable("catenum") String catenum) {
+    public ResponseEntity<List<ProductDto>> getAllProductsInCategory(@PathVariable("catenum") String catenum) {
         CategoryEnum ce = CategoryEnum.valueOf(catenum.toUpperCase());
-        List<ProductDTO> list = pService.getProductsOfCategory(ce);
-        return new ResponseEntity<List<ProductDTO>>(list, HttpStatus.OK);
+        List<ProductDto> list = productService.getProductsOfCategory(ce);
+        return new ResponseEntity<List<ProductDto>>(list, HttpStatus.OK);
 
     }
 
     @GetMapping("/products/status/{status}")
-    public ResponseEntity<List<ProductDTO>> getProductsWithStatusHandler(@PathVariable("status") String status) {
+    public ResponseEntity<List<ProductDto>> getProductsWithStatusHandler(@PathVariable("status") String status) {
 
         ProductStatus ps = ProductStatus.valueOf(status.toUpperCase());
-        List<ProductDTO> list = pService.getProductsOfStatus(ps);
+        List<ProductDto> list = productService.getProductsOfStatus(ps);
 
-        return new ResponseEntity<List<ProductDTO>>(list, HttpStatus.OK);
+        return new ResponseEntity<List<ProductDto>>(list, HttpStatus.OK);
 
     }
 
 
     @PutMapping("/products/{id}")
-    public ResponseEntity<Product> updateQuantityOfProduct(@PathVariable("id") Integer id,@RequestBody ProductDTO prodDto){
+    public ResponseEntity<Product> updateQuantityOfProduct(@PathVariable("id") Integer id,@RequestBody ProductDto prodDto){
 
-        Product prod =   pService.updateProductQuantityWithId(id, prodDto);
+        Product prod =   productService.updateProductQuantityWithId(id, prodDto);
 
         return new ResponseEntity<Product>(prod,HttpStatus.ACCEPTED);
     }

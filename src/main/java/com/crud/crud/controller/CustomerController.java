@@ -4,8 +4,14 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.crud.crud.data.dto.CustomerDto;
+import com.crud.crud.data.dto.CustomerUpdateDto;
+import com.crud.crud.data.dto.SessionDto;
+import com.crud.crud.data.models.Address;
+import com.crud.crud.data.models.Customer;
+import com.crud.crud.data.models.Order;
+import com.crud.crud.service.CustomerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class CustomerController {
-    @Autowired
-    CustomerService customerService;
+//    @Autowired
+    private final CustomerService customerService;
 
     // Handler to get a list of all customers
 
@@ -41,21 +47,21 @@ public class CustomerController {
     // Handler to Update a customer
 
     @PutMapping("/customer")
-    public ResponseEntity<Customer> updateCustomerHandler(@Valid @RequestBody CustomerUpdateDTO customerUpdate, @RequestHeader("token") String token){
+    public ResponseEntity<Customer> updateCustomerHandler(@Valid @RequestBody CustomerUpdateDto customerUpdate, @RequestHeader("token") String token){
         return new ResponseEntity<>(customerService.updateCustomer(customerUpdate, token), HttpStatus.ACCEPTED);
     }
 
 
     // Handler to update a customer email-id or mobile no
     @PutMapping("/customer/update/credentials")
-    public ResponseEntity<Customer> updateCustomerMobileEmailHandler(@Valid @RequestBody CustomerUpdateDTO customerUpdate, @RequestHeader("token") String token){
+    public ResponseEntity<Customer> updateCustomerMobileEmailHandler(@Valid @RequestBody CustomerUpdateDto customerUpdate, @RequestHeader("token") String token){
         return new ResponseEntity<>(customerService.updateCustomerMobileNoOrEmailId(customerUpdate, token), HttpStatus.ACCEPTED);
     }
 
 
     // Handler to update customer password
     @PutMapping("/customer/update/password")
-    public ResponseEntity<SessionDTO> updateCustomerPasswordHandler(@Valid @RequestBody CustomerDTO customerDto, @RequestHeader("token") String token){
+    public ResponseEntity<SessionDto> updateCustomerPasswordHandler(@Valid @RequestBody CustomerDto customerDto, @RequestHeader("token") String token){
         return new ResponseEntity<>(customerService.updateCustomerPassword(customerDto, token), HttpStatus.ACCEPTED);
     }
 
@@ -82,7 +88,7 @@ public class CustomerController {
 
     // Handler to delete customer
     @DeleteMapping("/customer")
-    public ResponseEntity<SessionDTO> deleteCustomerHandler(@Valid @RequestBody CustomerDTO customerDto, @RequestHeader("token") String token){
+    public ResponseEntity<SessionDto> deleteCustomerHandler(@Valid @RequestBody CustomerDto customerDto, @RequestHeader("token") String token){
         return new ResponseEntity<>(customerService.deleteCustomer(customerDto, token), HttpStatus.ACCEPTED);
     }
 

@@ -6,6 +6,11 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.crud.crud.data.dto.OrderDto;
+import com.crud.crud.data.models.Customer;
+import com.crud.crud.data.models.Order;
+import com.crud.crud.data.repository.OrderDao;
+import com.crud.crud.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,16 +20,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class OrderController {
-    @Autowired
-    private OrderDao orderDao;
+//    @Autowired
+    private final OrderDao orderDao;
 
-    @Autowired
-    private OrderService orderService;
+//    @Autowired
+    private final OrderService orderService;
 
     @PostMapping("/order/place")
-    public ResponseEntity<Order> addTheNewOrder(@Valid @RequestBody OrderDTO odto,@RequestHeader("token") String token){
+    public ResponseEntity<Order> addTheNewOrder(@Valid @RequestBody OrderDto odto, @RequestHeader("token") String token){
 
-        Order savedorder = oService.saveOrder(odto,token);
+        Order savedorder = orderService.saveOrder(odto,token);
         return new ResponseEntity<Order>(savedorder,HttpStatus.CREATED);
 
     }
@@ -33,7 +38,7 @@ public class OrderController {
     public List<Order> getAllOrders(){
 
 
-        List<Order> listOfAllOrders = oService.getAllOrders();
+        List<Order> listOfAllOrders = orderService.getAllOrders();
         return listOfAllOrders;
 
     }
@@ -41,20 +46,20 @@ public class OrderController {
     @GetMapping("/orders/{orderId}")
     public Order getOrdersByOrderId(@PathVariable("orderId") Integer orderId) {
 
-        return oService.getOrderByOrderId(orderId);
+        return orderService.getOrderByOrderId(orderId);
 
     }
 
     @DeleteMapping("/orders/{orderId}")
     public Order cancelTheOrderByOrderId(@PathVariable("orderId") Integer orderId,@RequestHeader("token") String token){
 
-        return oService.cancelOrderByOrderId(orderId,token);
+        return orderService.cancelOrderByOrderId(orderId,token);
     }
 
     @PutMapping("/orders/{orderId}")
-    public ResponseEntity<Order> updateOrderByOrder(@Valid @RequestBody OrderDTO orderdto, @PathVariable("orderId") Integer orderId,@RequestHeader("token") String token){
+    public ResponseEntity<Order> updateOrderByOrder(@Valid @RequestBody OrderDto orderdto, @PathVariable("orderId") Integer orderId,@RequestHeader("token") String token){
 
-        Order updatedOrder= oService.updateOrderByOrder(orderdto,orderId,token);
+        Order updatedOrder= orderService.updateOrderByOrder(orderdto,orderId,token);
 
         return new ResponseEntity<Order>(updatedOrder,HttpStatus.ACCEPTED);
 
@@ -65,11 +70,11 @@ public class OrderController {
 
         DateTimeFormatter dtf=DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate ld=LocalDate.parse(date,dtf);
-        return oService.getAllOrdersByDate(ld);
+        return orderService.getAllOrdersByDate(ld);
     }
 
     @GetMapping("/customer/{orderId}")
     public Customer getCustomerDetailsByOrderId(@PathVariable("orderId") Integer orderId) {
-        return oService.getCustomerByOrderid(orderId);
+        return orderService.getCustomerByOrderid(orderId);
     }
 }

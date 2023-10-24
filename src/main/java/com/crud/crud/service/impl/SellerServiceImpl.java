@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -83,15 +84,15 @@ public class SellerServiceImpl implements SellerService {
 
         loginService.checkTokenStatus(token);
 
-        Optional<Seller> opt=sellerDao.findById(sellerId);
+        Optional<Seller> sellerOptional = sellerDao.findById(sellerId);
 
-        if(opt.isPresent()) {
+        if(sellerOptional.isPresent()) {
 
             UserSession user = sessionDao.findByToken(token).get();
 
-            Seller existingseller=opt.get();
+            Seller existingseller = sellerOptional.get();
 
-            if(user.getUserId() == existingseller.getSellerId()) {
+            if(Objects.equals(user.getUserId(), existingseller.getSellerId())) {
                 sellerDao.delete(existingseller);
 
                 // logic to log out a seller after he deletes his account
@@ -111,7 +112,7 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     public Seller updateSellerMobile(SellerDto sellerdto, String token) throws SellerException {
-        if(token.contains("seller") == false) {
+        if(!token.contains("seller")) {
             throw new LoginException("Invalid session token for seller");
         }
 
@@ -126,28 +127,26 @@ public class SellerServiceImpl implements SellerService {
             return sellerDao.save(existingSeller);
         }
         else {
-            throw new SellerException("Error occured in updating mobile. Please enter correct password");
+            throw new SellerException("Error occurred in updating mobile. Please enter correct password");
         }
     }
 
     @Override
     public Seller getSellerByMobile(String mobile, String token) throws SellerException {
 
-        if(token.contains("seller") == false) {
+        if(!token.contains("seller")) {
             throw new LoginException("Invalid session token for seller");
         }
 
         loginService.checkTokenStatus(token);
 
-        Seller existingSeller = sellerDao.findByMobile(mobile).orElseThrow( () -> new SellerException("Seller not found with given mobile"));
-
-        return existingSeller;
+        return sellerDao.findByMobile(mobile).orElseThrow( () -> new SellerException("Seller not found with given mobile"));
     }
 
     @Override
     public Seller getCurrentlyLoggedInSeller(String token) throws SellerException{
 
-        if(token.contains("seller") == false) {
+        if(!token.contains("seller")) {
             throw new LoginException("Invalid session token for seller");
         }
 
@@ -155,15 +154,13 @@ public class SellerServiceImpl implements SellerService {
 
         UserSession user = sessionDao.findByToken(token).get();
 
-        Seller existingSeller=sellerDao.findById(user.getUserId()).orElseThrow(()->new SellerException("Seller not found for this ID"));
-
-        return existingSeller;
+        return sellerDao.findById(user.getUserId()).orElseThrow(() -> new SellerException("Seller not found for this ID"));
 
     }
 
     @Override
     public SessionDto updateSellerPassword(SellerDto sellerDTO, String token) throws SellerException {
-        if (token.contains("seller") == false) {
+        if (!token.contains("seller")) {
             throw new LoginException("Invalid session token for seller");
         }
 
@@ -180,7 +177,7 @@ public class SellerServiceImpl implements SellerService {
         Seller existingSeller = opt.get();
 
 
-        if (sellerDTO.getMobile().equals(existingSeller.getMobile()) == false) {
+        if (!sellerDTO.getMobile().equals(existingSeller.getMobile())) {
             throw new SellerException("Verification error. Mobile number does not match");
         }
 

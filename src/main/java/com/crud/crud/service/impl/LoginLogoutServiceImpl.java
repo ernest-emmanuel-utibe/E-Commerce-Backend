@@ -1,25 +1,42 @@
 package com.crud.crud.service.impl;
 
+import com.crud.crud.data.dto.CustomerDto;
+import com.crud.crud.data.dto.SellerDto;
+import com.crud.crud.data.dto.SessionDto;
+import com.crud.crud.data.models.Customer;
+import com.crud.crud.data.models.Seller;
+import com.crud.crud.data.models.UserSession;
+import com.crud.crud.data.repository.CustomerDao;
+import com.crud.crud.data.repository.SellerDao;
+import com.crud.crud.data.repository.SessionDao;
+import com.crud.crud.exception.CustomerNotFoundException;
+import com.crud.crud.exception.LoginException;
+import com.crud.crud.exception.SellerNotFoundException;
 import com.crud.crud.service.LoginLogoutService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
+@RequiredArgsConstructor
 public class LoginLogoutServiceImpl implements LoginLogoutService {
-    @Autowired
-    private SessionDao sessionDao;
+//    @Autowired
+    private final SessionDao sessionDao;
 
-    @Autowired
-    private CustomerDao customerDao;
+//    @Autowired
+    private final CustomerDao customerDao;
 
-    @Autowired
-    private SellerDao sellerDao;
+//    @Autowired
+    private final SellerDao sellerDao;
 
-
-
-    // Method to login a customer
 
     @Override
-    public UserSession loginCustomer(CustomerDTO loginCustomer) {
+    public UserSession loginCustomer(CustomerDto loginCustomer) {
 
         Optional<Customer> res = customerDao.findByMobileNo(loginCustomer.getMobileId());
 
@@ -68,7 +85,7 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
     // Method to logout a customer
 
     @Override
-    public SessionDTO logoutCustomer(SessionDTO sessionToken) {
+    public SessionDto logoutCustomer(SessionDto sessionToken) {
 
         String token = sessionToken.getToken();
 
@@ -87,11 +104,6 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 
         return sessionToken;
     }
-
-
-
-    // Method to check status of session token
-
 
     @Override
     public void checkTokenStatus(String token) {
@@ -121,7 +133,7 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
     // Method to login a valid seller and generate a seller token
 
     @Override
-    public UserSession loginSeller(SellerDTO seller) {
+    public UserSession loginSeller(SellerDto seller) {
 
         Optional<Seller> res = sellerDao.findByMobile(seller.getMobile());
 
@@ -170,7 +182,7 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
     // Method to logout a seller and delete his session token
 
     @Override
-    public SessionDTO logoutSeller(SessionDTO session) {
+    public SessionDto logoutSeller(SessionDto session) {
 
         String token = session.getToken();
 
@@ -189,9 +201,6 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 
         return session;
     }
-
-
-    // Method to delete expired tokens
 
     @Override
     public void deleteExpiredTokens() {

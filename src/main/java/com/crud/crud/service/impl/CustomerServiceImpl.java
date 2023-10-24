@@ -1,21 +1,36 @@
 package com.crud.crud.service.impl;
 
+import com.crud.crud.data.dto.CustomerDto;
+import com.crud.crud.data.dto.CustomerUpdateDto;
+import com.crud.crud.data.dto.SessionDto;
+import com.crud.crud.data.models.*;
+import com.crud.crud.data.repository.CustomerDao;
+import com.crud.crud.data.repository.SessionDao;
+import com.crud.crud.exception.CustomerException;
+import com.crud.crud.exception.CustomerNotFoundException;
+import com.crud.crud.exception.LoginException;
 import com.crud.crud.service.CustomerService;
+import com.crud.crud.service.LoginLogoutService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 @Service
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
-    @Autowired
-    private CustomerDao customerDao;
+//    @Autowired
+    private final CustomerDao customerDao;
 
-    @Autowired
-    private LoginLogoutService loginService;
+//    @Autowired
+    private final LoginLogoutService loginService;
 
-    @Autowired
-    private SessionDao sessionDao;
-
-
-    // Method to add a new customer
+//    @Autowired
+    private final SessionDao sessionDao;
 
     @Override
     public Customer addCustomer(Customer customer) {
@@ -67,11 +82,6 @@ public class CustomerServiceImpl implements CustomerService {
         return existingCustomer;
     }
 
-
-
-
-    // Method to get all customers - only seller or admin can get all customers - check validity of seller token
-
     @Override
     public List<Customer> getAllCustomers(String token) throws CustomerNotFoundException {
 
@@ -91,11 +101,8 @@ public class CustomerServiceImpl implements CustomerService {
         return customers;
     }
 
-
-    // Method to update entire customer details - either mobile number or email id should be correct
-
     @Override
-    public Customer updateCustomer(CustomerUpdateDTO customer, String token) throws CustomerNotFoundException {
+    public Customer updateCustomer(CustomerUpdateDto customer, String token) throws CustomerNotFoundException {
 
 
         if(token.contains("customer") == false) {
@@ -159,11 +166,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
-
-    // Method to update customer mobile number - details updated for current logged in user
-
     @Override
-    public Customer updateCustomerMobileNoOrEmailId(CustomerUpdateDTO customerUpdateDTO, String token) throws CustomerNotFoundException {
+    public Customer updateCustomerMobileNoOrEmailId(CustomerUpdateDto customerUpdateDTO, String token) throws CustomerNotFoundException {
 
         if(token.contains("customer") == false) {
             throw new LoginException("Invalid session token for customer");
@@ -196,7 +200,7 @@ public class CustomerServiceImpl implements CustomerService {
     // Method to update password - based on current token
 
     @Override
-    public SessionDTO updateCustomerPassword(CustomerDTO customerDTO, String token) {
+    public SessionDto updateCustomerPassword(CustomerDto customerDTO, String token) {
 
 
         if(token.contains("customer") == false) {
@@ -224,7 +228,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         customerDao.save(existingCustomer);
 
-        SessionDTO session = new SessionDTO();
+        SessionDto session = new SessionDto();
 
         session.setToken(token);
 
@@ -294,7 +298,7 @@ public class CustomerServiceImpl implements CustomerService {
     // Method to delete a customer by mobile id
 
     @Override
-    public SessionDTO deleteCustomer(CustomerDTO customerDTO, String token) throws CustomerNotFoundException {
+    public SessionDto deleteCustomer(CustomerDto customerDTO, String token) throws CustomerNotFoundException {
 
         if(token.contains("customer") == false) {
             throw new LoginException("Invalid session token for customer");
@@ -311,7 +315,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer existingCustomer = opt.get();
 
-        SessionDTO session = new SessionDTO();
+        SessionDto session = new SessionDto();
 
         session.setMessage("");
 

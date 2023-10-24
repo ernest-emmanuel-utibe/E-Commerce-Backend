@@ -42,7 +42,7 @@ public class Order {
     private LocalDate date;
     @NotNull
     @Enumerated(EnumType.STRING)
-    private OrderStatusValues orderStatus;
+    private OrderStatusValue orderStatus;
 
     private Double total;
 

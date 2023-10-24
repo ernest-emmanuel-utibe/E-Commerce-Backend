@@ -35,7 +35,7 @@ import lombok.ToString;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer customerId;
+    private Long customerId;
 
     @NotNull(message = "First Name cannot be NULL")
     @Pattern(regexp = "[A-Za-z.\\s]+", message = "Enter valid characters in first name")

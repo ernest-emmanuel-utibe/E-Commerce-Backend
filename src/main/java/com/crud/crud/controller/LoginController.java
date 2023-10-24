@@ -2,6 +2,15 @@ package com.crud.crud.controller;
 
 import javax.validation.Valid;
 
+import com.crud.crud.data.dto.CustomerDto;
+import com.crud.crud.data.dto.SellerDto;
+import com.crud.crud.data.dto.SessionDto;
+import com.crud.crud.data.models.Customer;
+import com.crud.crud.data.models.Seller;
+import com.crud.crud.data.models.UserSession;
+import com.crud.crud.service.CustomerService;
+import com.crud.crud.service.LoginLogoutService;
+import com.crud.crud.service.SellerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,14 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
-    @Autowired
-    private CustomerService customerService;
+//    @Autowired
+    private final CustomerService customerService;
 
-    @Autowired
-    private LoginLogoutService loginService;
+//    @Autowired
+    private final LoginLogoutService loginService;
 
-    @Autowired
-    private SellerService sellerService;
+//    @Autowired
+    private final SellerService sellerService;
 
 
     // Handler to register a new customer
@@ -33,7 +42,7 @@ public class LoginController {
     // Handler to login a user
 
     @PostMapping(value = "/login/customer", consumes = "application/json")
-    public ResponseEntity<UserSession> loginCustomerHandler(@Valid @RequestBody CustomerDTO customerdto){
+    public ResponseEntity<UserSession> loginCustomerHandler(@Valid @RequestBody CustomerDto customerdto){
         return new ResponseEntity<>(loginService.loginCustomer(customerdto), HttpStatus.ACCEPTED);
     }
 
@@ -41,7 +50,7 @@ public class LoginController {
     // Handler to logout a user
 
     @PostMapping(value = "/logout/customer", consumes = "application/json")
-    public ResponseEntity<SessionDTO> logoutCustomerHandler(@RequestBody SessionDTO sessionToken){
+    public ResponseEntity<SessionDto> logoutCustomerHandler(@RequestBody SessionDto sessionToken){
         return new ResponseEntity<>(loginService.logoutCustomer(sessionToken), HttpStatus.ACCEPTED);
     }
 
@@ -59,7 +68,7 @@ public class LoginController {
     // Handler to login a user
 
     @PostMapping(value = "/login/seller", consumes = "application/json")
-    public ResponseEntity<UserSession> loginSellerHandler(@Valid @RequestBody SellerDTO seller){
+    public ResponseEntity<UserSession> loginSellerHandler(@Valid @RequestBody SellerDto seller){
         return new ResponseEntity<>(loginService.loginSeller(seller), HttpStatus.ACCEPTED);
     }
 
@@ -67,7 +76,7 @@ public class LoginController {
     // Handler to logout a user
 
     @PostMapping(value = "/logout/seller", consumes = "application/json")
-    public ResponseEntity<SessionDTO> logoutSellerHandler(@RequestBody SessionDTO sessionToken){
+    public ResponseEntity<SessionDto> logoutSellerHandler(@RequestBody SessionDto sessionToken){
         return new ResponseEntity<>(loginService.logoutSeller(sessionToken), HttpStatus.ACCEPTED);
     }
 }

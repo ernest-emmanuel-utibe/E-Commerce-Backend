@@ -27,7 +27,7 @@ import lombok.Setter;
 public class Seller {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer sellerId;
+    private Long sellerId;
 
     @NotNull(message="Please enter the first name")
     @Pattern(regexp="[A-Za-z\\s]+", message="First Name should contains alphabets only")
