@@ -25,7 +25,7 @@ public class UserSession {
     private String token;
 
     @Column(unique = true)
-    private Integer userId;
+    private Long userId;
 
     private String userType;
 

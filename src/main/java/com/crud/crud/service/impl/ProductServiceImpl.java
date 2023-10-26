@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product addProductToCatalog(String token, Product product) {
 
-        Product prod = null;
+        Product product1 = null;
         Seller seller1 = sellerService.getCurrentlyLoggedInSeller(token);
         product.setSeller(seller1);
 
@@ -44,18 +44,18 @@ public class ProductServiceImpl implements ProductService {
 
             product.setSeller(seller);
 
-            prod = productDao.save(product);
+            product1 = productDao.save(product);
             ;
 
             seller.getProduct().add(product);
             sellerDao.save(seller);
 
         } else {
-            prod = productDao.save(product);
+            product1 = productDao.save(product);
             ;
         }
 
-        return prod;
+        return product1;
     }
 
     @Override
@@ -85,14 +85,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProductIncatalog(Product prod) throws ProductNotFoundException {
+    public Product updateProductInCatalog(Product prod) throws ProductNotFoundException {
 
         Optional<Product> opt = productDao.findById(prod.getProductId());
 
         if (opt.isPresent()) {
             opt.get();
-            Product prod1 = productDao.save(prod);
-            return prod1;
+            return productDao.save(prod);
         } else
             throw new ProductNotFoundException("Product not found with given id");
     }
@@ -101,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getAllProductsIncatalog() {
         List<Product> list = productDao.findAll();
 
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             return list;
         } else
             throw new ProductNotFoundException("No products in catalog");
@@ -109,14 +108,29 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getProductsOfCategory(CategoryEnum catenum) {
+    public List<ProductDto> getAllProductsOfSeller(Long id) {
+        List<ProductDto> list = productDao.getProductsOfASeller(id);
 
-        List<ProductDto> list = productDao.getAllProductsInACategory(catenum);
-        if (list.size() > 0) {
+        if(!list.isEmpty()) {
+
+            return list;
+
+        }
+
+        else {
+            throw new ProductNotFoundException("No products with SellerId: "+id);
+        }
+    }
+
+    @Override
+    public List<ProductDto> getProductsOfCategory(CategoryEnum categoryEnum) {
+
+        List<ProductDto> list = productDao.getAllProductsInACategory(categoryEnum);
+        if (!list.isEmpty()) {
 
             return list;
         } else
-            throw new CategoryNotFoundException("No products found with category:" + catenum);
+            throw new CategoryNotFoundException("No products found with category:" + categoryEnum);
     }
 
     @Override
@@ -124,18 +138,23 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductDto> list = productDao.getProductsWithStatus(status);
 
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             return list;
         } else
             throw new ProductNotFoundException("No products found with given status:" + status);
     }
 
     @Override
-    public Product updateProductQuantityWithId(Integer id, ProductDto prodDto) {
+    public Product updateProductQuantityWithId(Long id, ProductDto prodDTO) {
+        return null;
+    }
+
+    @Override
+    public Product updateProductQuantityWithId(Long id, ProductDto prodDto) {
         Product prod = null;
         Optional<Product> opt = productDao.findById(id);
 
-        if(opt!=null) {
+        if(opt.isPresent()) {
             prod = opt.get();
             prod.setQuantity(prod.getQuantity()+prodDto.getQuantity());
             if(prod.getQuantity()>0) {
@@ -148,23 +167,5 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductNotFoundException("No product found with this Id");
 
         return prod;
-    }
-
-
-
-    @Override
-    public List<ProductDto> getAllProductsOfSeller(Integer id) {
-
-        List<ProductDto> list = productDao.getProductsOfASeller(id);
-
-        if(list.size()>0) {
-
-            return list;
-
-        }
-
-        else {
-            throw new ProductNotFoundException("No products with SellerId: "+id);
-        }
     }
 }

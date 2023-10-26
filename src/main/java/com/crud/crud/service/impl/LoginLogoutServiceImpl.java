@@ -45,11 +45,11 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 
         Customer existingCustomer = res.get();
 
-        Optional<UserSession> opt = sessionDao.findByUserId(existingCustomer.getCustomerId());
+        Optional<UserSession> optionalUserSession = sessionDao.findByUserId(existingCustomer.getCustomerId());
 
-        if(opt.isPresent()) {
+        if(optionalUserSession.isPresent()) {
 
-            UserSession user = opt.get();
+            UserSession user = optionalUserSession.get();
 
             if(user.getSessionEndTime().isBefore(LocalDateTime.now())) {
                 sessionDao.delete(user);

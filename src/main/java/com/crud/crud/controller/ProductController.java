@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import com.crud.crud.data.dto.ProductDto;
 import com.crud.crud.data.models.CategoryEnum;
 import com.crud.crud.data.models.Product;
+import com.crud.crud.data.models.ProductStatus;
 import com.crud.crud.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,11 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 //    @Autowired
     private final ProductService productService;
-
-    // this method adds new product to catalog by seller(if seller is new it adds
-    // seller as well
-    // if seller is already existing products will be mapped to same seller) and
-    // returns added product
 
     @PostMapping("/products")
     public ResponseEntity<Product> addProductToCatalogHandler(@RequestHeader("token") String token,
@@ -67,7 +63,7 @@ public class ProductController {
     @PutMapping("/products")
     public ResponseEntity<Product> updateProductInCatalogHandler(@Valid @RequestBody Product prod) {
 
-        Product prod1 = productService.updateProductIncatalog(prod);
+        Product prod1 = productService.updateProductInCatalog(prod);
 
         return new ResponseEntity<Product>(prod1, HttpStatus.OK);
 
@@ -92,8 +88,8 @@ public class ProductController {
 
     @GetMapping("/products/{catenum}")
     public ResponseEntity<List<ProductDto>> getAllProductsInCategory(@PathVariable("catenum") String catenum) {
-        CategoryEnum ce = CategoryEnum.valueOf(catenum.toUpperCase());
-        List<ProductDto> list = productService.getProductsOfCategory(ce);
+        CategoryEnum categoryEnum = CategoryEnum.valueOf(catenum.toUpperCase());
+        List<ProductDto> list = productService.getProductsOfCategory(categoryEnum);
         return new ResponseEntity<List<ProductDto>>(list, HttpStatus.OK);
 
     }
@@ -101,8 +97,8 @@ public class ProductController {
     @GetMapping("/products/status/{status}")
     public ResponseEntity<List<ProductDto>> getProductsWithStatusHandler(@PathVariable("status") String status) {
 
-        ProductStatus ps = ProductStatus.valueOf(status.toUpperCase());
-        List<ProductDto> list = productService.getProductsOfStatus(ps);
+        ProductStatus productStatus = ProductStatus.valueOf(status.toUpperCase());
+        List<ProductDto> list = productService.getProductsOfStatus(productStatus);
 
         return new ResponseEntity<List<ProductDto>>(list, HttpStatus.OK);
 
@@ -112,8 +108,8 @@ public class ProductController {
     @PutMapping("/products/{id}")
     public ResponseEntity<Product> updateQuantityOfProduct(@PathVariable("id") Integer id,@RequestBody ProductDto prodDto){
 
-        Product prod =   productService.updateProductQuantityWithId(id, prodDto);
+        Product product =   productService.updateProductQuantityWithId(id, prodDto);
 
-        return new ResponseEntity<Product>(prod,HttpStatus.ACCEPTED);
+        return new ResponseEntity<Product>(product,HttpStatus.ACCEPTED);
     }
 }

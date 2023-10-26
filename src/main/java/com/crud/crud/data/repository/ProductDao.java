@@ -16,7 +16,7 @@ import java.util.List;
 public interface ProductDao extends JpaRepository<Product, Long> {
     @Query("select new com.crud.crud.data.dto.ProductDto(p.productName,p.manufacturer,p.price,p.quantity) "
             + "from Product p where p.category=:catenum")
-    public List<ProductDto> getAllProductsInACategory(@Param("catenum") CategoryEnum catenum);
+    public List<ProductDto> getAllProductsInACategory(@Param("categoryEnum") CategoryEnum categoryEnum);
 
 
     @Query("select new com.crud.crud.data.dto.ProductDto(p.productName,p.manufacturer,p.price,p.quantity) "
@@ -25,5 +25,5 @@ public interface ProductDao extends JpaRepository<Product, Long> {
 
     @Query("select new com.crud.crud.data.dto.ProductDto(p.productName,p.manufacturer,p.price,p.quantity) "
             + "from Product p where p.seller.sellerId=:id")
-    public List<ProductDto> getProductsOfASeller(@Param("id") Integer id);
+    public List<ProductDto> getProductsOfASeller(@Param("id") Long id);
 }

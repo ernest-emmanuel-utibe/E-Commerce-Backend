@@ -14,7 +14,7 @@ public interface ProductService {
 
     public String deleteProductFromCatalog(Integer id);
 
-    public Product updateProductIncatalog(Product product);
+    public Product updateProductInCatalog(Product product);
 
     public List<Product> getAllProductsIncatalog();
 
@@ -25,4 +25,8 @@ public interface ProductService {
     public List<ProductDto> getProductsOfStatus(ProductStatus status);
 
     public Product updateProductQuantityWithId(Integer id,ProductDto prodDTO);
+
+    Product updateProductQuantityWithId(Long id, ProductDto prodDto);
+
+    List<ProductDto> getAllProductsOfSeller(Long id);
 }

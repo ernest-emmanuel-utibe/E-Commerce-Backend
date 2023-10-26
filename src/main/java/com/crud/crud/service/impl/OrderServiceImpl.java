@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -30,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Order saveOrder(OrderDto odto, String token) throws LoginException, OrderException {
+    public Order saveOrder(OrderDto orderDto, String token) throws LoginException, OrderException {
 
         Order newOrder= new Order();
 
@@ -40,32 +41,32 @@ public class OrderServiceImpl implements OrderService {
             //Customer loggedInCustomer= cs.getLoggedInCustomerDetails(token);
             newOrder.setCustomer(loggedInCustomer);
             String usersCardNumber= loggedInCustomer.getCreditCard().getCardNumber();
-            String userGivenCardNumber= odto.getCardNumber().getCardNumber();
+            String userGivenCardNumber= String.valueOf(orderDto.getCardNumber());
             List<CartItem> productsInCart= loggedInCustomer.getCustomerCart().getCartItems();
             List<CartItem> productsInOrder = new ArrayList<>(productsInCart);
 
-            newOrder.setOrdercartItems(productsInOrder);
+            newOrder.setOrderCartItems(productsInOrder);
             newOrder.setTotal(loggedInCustomer.getCustomerCart().getCartTotal());
 
 
 
-            if(productsInCart.size()!=0) {
+            if(!productsInCart.isEmpty()) {
                 if((usersCardNumber.equals(userGivenCardNumber))
-                        && (odto.getCardNumber().getCardValidity().equals(loggedInCustomer.getCreditCard().getCardValidity())
-                        && (odto.getCardNumber().getCardCVV().equals(loggedInCustomer.getCreditCard().getCardCVV())))) {
+                        && (orderDto.getCardNumber().getCardValidity().equals(loggedInCustomer.getCreditCard().getCardValidity())
+                        && (orderDto.getCardNumber().getCardCVV().equals(loggedInCustomer.getCreditCard().getCardCVV())))) {
 
                     //System.out.println(usersCardNumber);
-                    newOrder.setCardNumber(odto.getCardNumber().getCardNumber());
-                    newOrder.setAddress(loggedInCustomer.getAddress().get(odto.getAddressType()));
+                    newOrder.setCardNumber(orderDto.getCardNumber();
+                    newOrder.setAddress(loggedInCustomer.getAddress().get(orderDto.getAddressType()));
                     newOrder.setDate(LocalDate.now());
                     newOrder.setOrderStatus(OrderStatusValue.SUCCESS);
                     System.out.println(usersCardNumber);
                     List<CartItem> cartItemsList= loggedInCustomer.getCustomerCart().getCartItems();
 
                     for(CartItem cartItem : cartItemsList ) {
-                        Integer remainingQuantity = cartItem.getCartProduct().getQuantity()-cartItem.getCartItemQuantity();
+                        long remainingQuantity = (long) (cartItem.getCartProduct().getQuantity()-cartItem.getCartItemQuantity());
                         if(remainingQuantity < 0 || cartItem.getCartProduct().getStatus() == ProductStatus.OUTOFSTOCK) {
-                            CartDTO cartdto = new CartDTO();
+                            CartDto cartdto = new CartDto();
                             cartdto.setProductId(cartItem.getCartProduct().getProductId());
                             cartService.removeProductFromCart(cartdto, token);
                             throw new OrderException("Product "+ cartItem.getCartProduct().getProductName() + " OUT OF STOCK");
@@ -76,13 +77,12 @@ public class OrderServiceImpl implements OrderService {
                         }
                     }
                     cartService.clearCart(token);
-                    //System.out.println(newOrder);
                     return orderDao.save(newOrder);
                 }
                 else {
                     System.out.println("Not same");
                     newOrder.setCardNumber(null);
-                    newOrder.setAddress(loggedInCustomer.getAddress().get(odto.getAddressType()));
+                    newOrder.setAddress(loggedInCustomer.getAddress().get(orderDto.getAddressType()));
                     newOrder.setDate(LocalDate.now());
                     newOrder.setOrderStatus(OrderStatusValue.PENDING);
                     cartService.clearCart(token);
@@ -93,7 +93,6 @@ public class OrderServiceImpl implements OrderService {
             else {
                 throw new OrderException("No products in Cart");
             }
-
         }
         else {
             throw new LoginException("Invalid session token for customer"+"Kindly Login");
@@ -101,76 +100,40 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getOrderByOrderId(Integer OrderId) throws OrderException {
+    public Order getOrderByOrderId(Long OrderId) throws OrderException {
         return orderDao.findById(OrderId).orElseThrow(()-> new OrderException("No order exists with given OrderId "+ OrderId));
-
     }
 
     @Override
     public List<Order> getAllOrders() throws OrderException {
         // TODO Auto-generated method stub
+
         List<Order> orders = orderDao.findAll();
-        if(orders.size()>0)
+        if(!orders.isEmpty())
             return orders;
         else
             throw new OrderException("No Orders exists on your account");
     }
 
     @Override
-    public Order cancelOrderByOrderId(Integer OrderId,String token) throws OrderException {
-        Order order= orderDao.findById(OrderId).orElseThrow(()->new OrderException("No order exists with given OrderId "+ OrderId));
-        if(order.getCustomer().getCustomerId()== customerService.getLoggedInCustomerDetails(token).getCustomerId()) {
-            if(order.getOrderStatus()==OrderStatusValue.PENDING) {
-                order.setOrderStatus(OrderStatusValue.CANCELLED);
-                orderDao.save(order);
-                return order;
-            }
-            else if(order.getOrderStatus()==OrderStatusValue.SUCCESS) {
-                order.setOrderStatus(OrderStatusValue.CANCELLED);
-                List<CartItem> cartItemsList= order.getOrdercartItems();
-
-                for(CartItem cartItem : cartItemsList ) {
-                    Integer addedQuantity = cartItem.getCartProduct().getQuantity()+cartItem.getCartItemQuantity();
-                    cartItem.getCartProduct().setQuantity(addedQuantity);
-                    if(cartItem.getCartProduct().getStatus() == ProductStatus.OUTOFSTOCK) {
-                        cartItem.getCartProduct().setStatus(ProductStatus.AVAILABLE);
-                    }
-                }
-
-                orderDao.save(order);
-                return order;
-            }
-            else {
-                throw new OrderException("Order was already cancelled");
-            }
-        }
-        else {
-            throw new LoginException("Invalid session token for customer"+"Kindly Login");
-        }
-
-
-    }
-
-    @Override
-    public Order updateOrderByOrder(OrderDto orderdto, Integer OrderId,String token) throws OrderException,LoginException {
+    public Order updateOrderByOrder(OrderDto order, Integer OrderId, String token) throws OrderException, LoginException {
         Order existingOrder= orderDao.findById(OrderId).orElseThrow(()->new OrderException("No order exists with given OrderId "+ OrderId));
 
-        if(existingOrder.getCustomer().getCustomerId()== customerService.getLoggedInCustomerDetails(token).getCustomerId()) {
-            //existingOrder.setCardNumber(orderdto.getCardNumber().getCardNumber());
-            //existingOrder.setAddress(existingOrder.getCustomer().getAddress().get(orderdto.getAddressType()));
+        if(Objects.equals(existingOrder.getCustomer().getCustomerId(), customerService.getLoggedInCustomerDetails(token).getCustomerId())) {
+            //existingOrder.setCardNumber(ordered.getCardNumber().getCardNumber());
+            //existingOrder.setAddress(existingOrder.getCustomer().getAddress().get(ordered.getAddressType()));
             Customer loggedInCustomer = customerService.getLoggedInCustomerDetails(token);
             String usersCardNumber= loggedInCustomer.getCreditCard().getCardNumber();
-            String userGivenCardNumber= orderdto.getCardNumber().getCardNumber();
-//			System.out.println(loggedInCustomer);
+            String userGivenCardNumber= String.valueOf(orderdto.getCardNumber());
             if((usersCardNumber.equals(userGivenCardNumber))
                     && (orderdto.getCardNumber().getCardValidity().equals(loggedInCustomer.getCreditCard().getCardValidity())
                     && (orderdto.getCardNumber().getCardCVV().equals(loggedInCustomer.getCreditCard().getCardCVV())))) {
                 existingOrder.setCardNumber(orderdto.getCardNumber().getCardNumber());
                 existingOrder.setAddress(existingOrder.getCustomer().getAddress().get(orderdto.getAddressType()));
                 existingOrder.setOrderStatus(OrderStatusValue.SUCCESS);
-                List<CartItem> cartItemsList= existingOrder.getOrdercartItems();
+                List<CartItem> cartItemsList= existingOrder.getOrderCartItems();
                 for(CartItem cartItem : cartItemsList ) {
-                    Integer remainingQuantity = cartItem.getCartProduct().getQuantity()-cartItem.getCartItemQuantity();
+                    long remainingQuantity = cartItem.getCartProduct().getQuantity()-cartItem.getCartItemQuantity();
                     if(remainingQuantity < 0 || cartItem.getCartProduct().getStatus() == ProductStatus.OUTOFSTOCK) {
                         CartDto cartdto = new CartDto();
                         cartdto.setProductId(cartItem.getCartProduct().getProductId());
@@ -193,14 +156,12 @@ public class OrderServiceImpl implements OrderService {
         else {
             throw new LoginException("Invalid session token for customer"+"Kindly Login");
         }
-
     }
 
     @Override
     public List<Order> getAllOrdersByDate(LocalDate date) throws OrderException {
 
-        List<Order> listOfOrdersOntheDay= orderDao.findByDate(date);
-        return listOfOrdersOntheDay;
+        return orderDao.findByDate(date);
     }
 
     @Override
@@ -213,5 +174,38 @@ public class OrderServiceImpl implements OrderService {
         }
         else
             throw new OrderException("No Order exists with orderId "+orderId);
+    }
+
+    @Override
+    public Order cancelOrderByOrderId(Long OrderId, String token) throws OrderException {
+        Order order= orderDao.findById(OrderId).orElseThrow(()->new OrderException("No order exists with given OrderId "+ OrderId));
+        if(Objects.equals(order.getCustomer().getCustomerId(), customerService.getLoggedInCustomerDetails(token).getCustomerId())) {
+            if(order.getOrderStatus()==OrderStatusValue.PENDING) {
+                order.setOrderStatus(OrderStatusValue.CANCELLED);
+                orderDao.save(order);
+                return order;
+            }
+            else if(order.getOrderStatus()==OrderStatusValue.SUCCESS) {
+                order.setOrderStatus(OrderStatusValue.CANCELLED);
+                List<CartItem> cartItemsList= order.getOrderCartItems();
+
+                for(CartItem cartItem : cartItemsList ) {
+                    Integer addedQuantity = cartItem.getCartProduct().getQuantity()+cartItem.getCartItemQuantity();
+                    cartItem.getCartProduct().setQuantity(addedQuantity);
+                    if(cartItem.getCartProduct().getStatus() == ProductStatus.OUTOFSTOCK) {
+                        cartItem.getCartProduct().setStatus(ProductStatus.AVAILABLE);
+                    }
+                }
+
+                orderDao.save(order);
+                return order;
+            }
+            else {
+                throw new OrderException("Order was already cancelled");
+            }
+        }
+        else {
+            throw new LoginException("Invalid session token for customer"+"Kindly Login");
+        }
     }
 }

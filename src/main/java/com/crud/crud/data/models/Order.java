@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,7 +20,6 @@ import javax.validation.constraints.PastOrPresent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,7 +35,7 @@ import lombok.ToString;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer orderId;
+    private Long orderId;
     @PastOrPresent
     private LocalDate date;
     @NotNull
@@ -54,7 +52,7 @@ public class Order {
     private Customer customer;
 
     @OneToMany
-    private List<CartItem> ordercartItems = new ArrayList<>();
+    private List<CartItem> orderCartItems = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "address_id", referencedColumnName = "addressId")

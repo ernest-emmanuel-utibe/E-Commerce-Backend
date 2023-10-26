@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface SessionDao extends JpaRepository<UserSession, Long> {
     Optional<UserSession> findByToken(String token);
-    Optional<UserSession> findByUserId(Integer userId);
+    Optional<UserSession> findByUserId(Long userId);
 }

@@ -9,7 +9,6 @@ import com.crud.crud.data.dto.SessionDto;
 import com.crud.crud.data.models.Seller;
 import com.crud.crud.service.SellerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,19 +27,15 @@ public class SellerController {
 //    @Autowired
     private final SellerService sellerService;
 
-    @PostMapping("/addseller")
+    @PostMapping("/add seller")
     public ResponseEntity<Seller> addSellerHandler(@Valid @RequestBody Seller seller){
 
         Seller addseller=sellerService.addSeller(seller);
 
         System.out.println("Seller"+ seller);
 
-        return new ResponseEntity<Seller>(addseller,HttpStatus.CREATED);
+        return new ResponseEntity<>(addseller, HttpStatus.CREATED);
     }
-
-
-
-    //Get the list of seller-----------------------
 
 
     @GetMapping("/sellers")
@@ -48,11 +43,8 @@ public class SellerController {
 
         List<Seller> sellers=sellerService.getAllSellers();
 
-        return new ResponseEntity<List<Seller>>(sellers, HttpStatus.OK);
+        return new ResponseEntity<>(sellers, HttpStatus.OK);
     }
-
-
-    //Get the seller by Id............................
 
 
     @GetMapping("/seller/{sellerId}")
@@ -60,39 +52,30 @@ public class SellerController {
 
         Seller getSeller=sellerService.getSellerById(Id);
 
-        return new ResponseEntity<Seller>(getSeller, HttpStatus.OK);
+        return new ResponseEntity<>(getSeller, HttpStatus.OK);
     }
-
-
-    // Get Seller by mobile Number
 
     @GetMapping("/seller")
     public ResponseEntity<Seller> getSellerByMobileHandler(@RequestParam("mobile") String mobile, @RequestHeader("token") String token){
 
         Seller getSeller=sellerService.getSellerByMobile(mobile, token);
 
-        return new ResponseEntity<Seller>(getSeller, HttpStatus.OK);
+        return new ResponseEntity<>(getSeller, HttpStatus.OK);
     }
-
-
-    // Get currently logged in seller
 
     @GetMapping("/seller/current")
     public ResponseEntity<Seller> getLoggedInSellerHandler(@RequestHeader("token") String token){
 
         Seller getSeller = sellerService.getCurrentlyLoggedInSeller(token);
 
-        return new ResponseEntity<Seller>(getSeller, HttpStatus.OK);
+        return new ResponseEntity<>(getSeller, HttpStatus.OK);
     }
-
-    //Update the seller..............................
-
 
     @PutMapping("/seller")
     public ResponseEntity<Seller> updateSellerHandler(@RequestBody Seller seller, @RequestHeader("token") String token){
         Seller updatedseller=sellerService.updateSeller(seller, token);
 
-        return new ResponseEntity<Seller>(updatedseller,HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(updatedseller, HttpStatus.ACCEPTED);
 
     }
 
@@ -101,7 +84,7 @@ public class SellerController {
     public ResponseEntity<Seller> updateSellerMobileHandler(@Valid @RequestBody SellerDto sellerdto, @RequestHeader("token") String token){
         Seller updatedseller=sellerService.updateSellerMobile(sellerdto, token);
 
-        return new ResponseEntity<Seller>(updatedseller,HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(updatedseller,HttpStatus.ACCEPTED);
 
     }
 
@@ -117,7 +100,7 @@ public class SellerController {
 
         Seller deletedSeller=sellerService.deleteSellerById(Id, token);
 
-        return new ResponseEntity<Seller>(deletedSeller,HttpStatus.OK);
+        return new ResponseEntity<>(deletedSeller, HttpStatus.OK);
 
     }
 }

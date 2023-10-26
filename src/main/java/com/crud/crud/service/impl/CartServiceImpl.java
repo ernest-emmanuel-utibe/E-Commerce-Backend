@@ -57,12 +57,12 @@ public class CartServiceImpl implements CartService {
 
         UserSession user = sessionDao.findByToken(token).get();
 
-        Optional<Customer> opt = customerDao.findById(user.getUserId());
+        Optional<Customer> customer = customerDao.findById(user.getUserId());
 
-        if(opt.isEmpty())
+        if(customer.isEmpty())
             throw new CustomerNotFoundException("Customer does not exist");
 
-        Customer existingCustomer = opt.get();
+        Customer existingCustomer = customer.get();
 
         Cart customerCart = existingCustomer.getCustomerCart();
 
@@ -71,7 +71,7 @@ public class CartServiceImpl implements CartService {
         CartItem item = cartItemService.createItemForCart(cartDto);
 
 
-        if(cartItems.size() == 0) {
+        if(cartItems.isEmpty()) {
             cartItems.add(item);
             customerCart.setCartTotal(item.getCartProduct().getPrice());
         }
@@ -98,7 +98,7 @@ public class CartServiceImpl implements CartService {
 
         System.out.println("Inside get cart");
 
-        if(token.contains("customer") == false) {
+        if(!token.contains("customer")) {
             throw new LoginException("Invalid session token for customer");
         }
 
@@ -106,32 +106,32 @@ public class CartServiceImpl implements CartService {
 
         UserSession user = sessionDao.findByToken(token).get();
 
-        Optional<Customer> opt = customerDao.findById(user.getUserId());
+        Optional<Customer> customer = customerDao.findById(user.getUserId());
 
 
-        if(opt.isEmpty())
+        if(customer.isEmpty())
             throw new CustomerNotFoundException("Customer does not exist");
 
-        Customer existingCustomer = opt.get();
+        Customer existingCustomer = customer.get();
 
 //
-        Integer cartId = existingCustomer.getCustomerCart().getCartId();
+        Long cartId = existingCustomer.getCustomerCart().getCartId();
 
 
-        Optional<Cart> optCart= cartDao.findById(cartId);
+        Optional<Cart> optionalCart= cartDao.findById(cartId);
 
-        if(optCart.isEmpty()) {
+        if(optionalCart.isEmpty()) {
             throw new CartItemNotFoundException("cart Not found by Id");
         }
-//		return optCart.get().getProducts();
+//		return optionalCart.get().getProducts();
 
-        return optCart.get();
+        return optionalCart.get();
 //		return cart.getProducts();
     }
 
     @Override
     public Cart removeProductFromCart(CartDto cartDto, String token) throws ProductNotFoundException {
-        if(token.contains("customer") == false) {
+        if(!token.contains("customer")) {
             throw new LoginException("Invalid session token for customer");
         }
 
@@ -150,22 +150,22 @@ public class CartServiceImpl implements CartService {
 
         List<CartItem> cartItems = customerCart.getCartItems();
 
-        if(cartItems.size() == 0) {
+        if(cartItems.isEmpty()) {
             throw new CartItemNotFoundException("Cart is empty");
         }
 
 
         boolean flag = false;
 
-        for(CartItem c: cartItems) {
-            System.out.println("Item" + c.getCartProduct());
-            if(c.getCartProduct().getProductId() == cartDto.getProductId()) {
-                c.setCartItemQuantity(c.getCartItemQuantity() - 1);
+        for(CartItem cartItem: cartItems) {
+            System.out.println("Item" + cartItem.getCartProduct());
+            if(cartItem.getCartProduct().getProductId() == cartDto.getProductId()) {
+                cartItem.setCartItemQuantity(cartItem.getCartItemQuantity() - 1);
 
-                customerCart.setCartTotal(customerCart.getCartTotal() - c.getCartProduct().getPrice());
-                if(c.getCartItemQuantity() == 0) {
+                customerCart.setCartTotal(customerCart.getCartTotal() - cartItem.getCartProduct().getPrice());
+                if(cartItem.getCartItemQuantity() == 0) {
 
-                    cartItems.remove(c);
+                    cartItems.remove(cartItem);
 
 
                     return cartDao.save(customerCart);
@@ -194,7 +194,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public Cart clearCart(String token) {
 
-        if(token.contains("customer") == false) {
+        if(!token.contains("customer")) {
             throw new LoginException("Invalid session token for customer");
         }
 
@@ -211,7 +211,7 @@ public class CartServiceImpl implements CartService {
 
         Cart customerCart = existingCustomer.getCustomerCart();
 
-        if(customerCart.getCartItems().size() == 0) {
+        if(customerCart.getCartItems().isEmpty()) {
             throw new CartItemNotFoundException("Cart already empty");
         }
 

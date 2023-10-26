@@ -1,7 +1,5 @@
 package com.crud.crud.controller;
 
-import java.util.List;
-
 import com.crud.crud.data.dto.CartDto;
 import com.crud.crud.data.models.Cart;
 import com.crud.crud.data.repository.CartDao;
@@ -32,7 +30,7 @@ public class CartController {
 
 
     @PostMapping(value = "/cart/add")
-    public ResponseEntity<Cart> addProductToCartHander(@RequestBody CartDto cartdto , @RequestHeader("token")String token){
+    public ResponseEntity<Cart> addProductToCartHandler(@RequestBody CartDto cartdto , @RequestHeader("token")String token){
 
         Cart cart = cartService.addProductToCart(cartdto, token);
         return new ResponseEntity<Cart>(cart,HttpStatus.CREATED);
@@ -46,7 +44,7 @@ public class CartController {
 
 
     @DeleteMapping(value = "/cart")
-    public ResponseEntity<Cart> removeProductFromCartHander(@RequestBody CartDto cartdto ,@RequestHeader("token")String token){
+    public ResponseEntity<Cart> removeProductFromCartHandler(@RequestBody CartDto cartdto , @RequestHeader("token")String token){
 
         Cart cart = cartService.removeProductFromCart(cartdto, token);
         return new ResponseEntity<Cart>(cart,HttpStatus.OK);

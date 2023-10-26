@@ -9,5 +9,5 @@ public class ProductDto {
     private String prodName;
     private String manufacturer;
     private Double price;
-    private Integer quantity;
+    private Long quantity;
 }

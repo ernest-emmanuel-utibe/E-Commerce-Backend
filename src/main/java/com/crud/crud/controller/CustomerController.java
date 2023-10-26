@@ -8,6 +8,7 @@ import com.crud.crud.data.dto.CustomerDto;
 import com.crud.crud.data.dto.CustomerUpdateDto;
 import com.crud.crud.data.dto.SessionDto;
 import com.crud.crud.data.models.Address;
+import com.crud.crud.data.models.CreditCard;
 import com.crud.crud.data.models.Customer;
 import com.crud.crud.data.models.Order;
 import com.crud.crud.service.CustomerService;

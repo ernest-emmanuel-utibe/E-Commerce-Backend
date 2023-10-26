@@ -12,7 +12,6 @@ import com.crud.crud.data.models.Order;
 import com.crud.crud.data.repository.OrderDao;
 import com.crud.crud.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,22 +35,18 @@ public class OrderController {
 
     @GetMapping("/orders")
     public List<Order> getAllOrders(){
-
-
-        List<Order> listOfAllOrders = orderService.getAllOrders();
-        return listOfAllOrders;
-
+        return orderService.getAllOrders();
     }
 
     @GetMapping("/orders/{orderId}")
-    public Order getOrdersByOrderId(@PathVariable("orderId") Integer orderId) {
+    public Order getOrdersByOrderId(@PathVariable("orderId") Long orderId) {
 
         return orderService.getOrderByOrderId(orderId);
 
     }
 
     @DeleteMapping("/orders/{orderId}")
-    public Order cancelTheOrderByOrderId(@PathVariable("orderId") Integer orderId,@RequestHeader("token") String token){
+    public Order cancelTheOrderByOrderId(@PathVariable("orderId") Long orderId,@RequestHeader("token") String token){
 
         return orderService.cancelOrderByOrderId(orderId,token);
     }
@@ -74,7 +69,7 @@ public class OrderController {
     }
 
     @GetMapping("/customer/{orderId}")
-    public Customer getCustomerDetailsByOrderId(@PathVariable("orderId") Integer orderId) {
-        return orderService.getCustomerByOrderid(orderId);
+    public Customer getCustomerDetailsByOrderId(@PathVariable("orderId") Long orderId) {
+        return orderService.getCustomerByOrderId(orderId);
     }
 }
