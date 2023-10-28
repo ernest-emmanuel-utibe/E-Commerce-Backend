@@ -49,7 +49,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart addProductToCart(CartDto cartDto, String token) throws CartItemNotFoundException {
-        if(token.contains("customer") == false) {
+        if(!token.contains("customer")) {
             throw new LoginException("Invalid session token for customer");
         }
 

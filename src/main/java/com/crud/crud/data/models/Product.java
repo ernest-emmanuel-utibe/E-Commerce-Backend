@@ -50,7 +50,7 @@ public class Product {
 
     @NotNull
     @Min(value = 0)
-    private Integer quantity;
+    private Long quantity;
 
     @Enumerated(EnumType.STRING)
     private CategoryEnum category;

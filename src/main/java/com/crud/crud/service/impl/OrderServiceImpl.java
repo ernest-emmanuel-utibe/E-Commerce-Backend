@@ -55,8 +55,7 @@ public class OrderServiceImpl implements OrderService {
                         && (orderDto.getCardNumber().getCardValidity().equals(loggedInCustomer.getCreditCard().getCardValidity())
                         && (orderDto.getCardNumber().getCardCVV().equals(loggedInCustomer.getCreditCard().getCardCVV())))) {
 
-                    //System.out.println(usersCardNumber);
-                    newOrder.setCardNumber(orderDto.getCardNumber();
+                    newOrder.setCardNumber(String.valueOf(orderDto.getCardNumber()));
                     newOrder.setAddress(loggedInCustomer.getAddress().get(orderDto.getAddressType()));
                     newOrder.setDate(LocalDate.now());
                     newOrder.setOrderStatus(OrderStatusValue.SUCCESS);
@@ -116,20 +115,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order updateOrderByOrder(OrderDto order, Integer OrderId, String token) throws OrderException, LoginException {
-        Order existingOrder= orderDao.findById(OrderId).orElseThrow(()->new OrderException("No order exists with given OrderId "+ OrderId));
+    public Order updateOrderByOrder(OrderDto orderDto, Long OrderId, String token) throws OrderException, LoginException {
+        Order existingOrder = orderDao.findById(OrderId).orElseThrow(()->new OrderException("No order exists with given OrderId "+ OrderId));
 
         if(Objects.equals(existingOrder.getCustomer().getCustomerId(), customerService.getLoggedInCustomerDetails(token).getCustomerId())) {
             //existingOrder.setCardNumber(ordered.getCardNumber().getCardNumber());
             //existingOrder.setAddress(existingOrder.getCustomer().getAddress().get(ordered.getAddressType()));
             Customer loggedInCustomer = customerService.getLoggedInCustomerDetails(token);
             String usersCardNumber= loggedInCustomer.getCreditCard().getCardNumber();
-            String userGivenCardNumber= String.valueOf(orderdto.getCardNumber());
+            String userGivenCardNumber= String.valueOf(orderDto.getCardNumber());
             if((usersCardNumber.equals(userGivenCardNumber))
-                    && (orderdto.getCardNumber().getCardValidity().equals(loggedInCustomer.getCreditCard().getCardValidity())
-                    && (orderdto.getCardNumber().getCardCVV().equals(loggedInCustomer.getCreditCard().getCardCVV())))) {
-                existingOrder.setCardNumber(orderdto.getCardNumber().getCardNumber());
-                existingOrder.setAddress(existingOrder.getCustomer().getAddress().get(orderdto.getAddressType()));
+                    && (orderDto.getCardNumber().getCardValidity().equals(loggedInCustomer.getCreditCard().getCardValidity())
+                    && (orderDto.getCardNumber().getCardCVV().equals(loggedInCustomer.getCreditCard().getCardCVV())))) {
+                existingOrder.setCardNumber(String.valueOf(orderDto.getCardNumber()));
+                existingOrder.setAddress(existingOrder.getCustomer().getAddress().get(orderDto.getAddressType()));
                 existingOrder.setOrderStatus(OrderStatusValue.SUCCESS);
                 List<CartItem> cartItemsList= existingOrder.getOrderCartItems();
                 for(CartItem cartItem : cartItemsList ) {
@@ -190,7 +189,7 @@ public class OrderServiceImpl implements OrderService {
                 List<CartItem> cartItemsList= order.getOrderCartItems();
 
                 for(CartItem cartItem : cartItemsList ) {
-                    Integer addedQuantity = cartItem.getCartProduct().getQuantity()+cartItem.getCartItemQuantity();
+                    Long addedQuantity = cartItem.getCartProduct().getQuantity()+cartItem.getCartItemQuantity();
                     cartItem.getCartProduct().setQuantity(addedQuantity);
                     if(cartItem.getCartProduct().getStatus() == ProductStatus.OUTOFSTOCK) {
                         cartItem.getCartProduct().setStatus(ProductStatus.AVAILABLE);

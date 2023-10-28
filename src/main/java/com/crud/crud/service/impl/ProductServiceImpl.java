@@ -37,10 +37,10 @@ public class ProductServiceImpl implements ProductService {
         product.setSeller(seller1);
 
         Seller Existingseller = sellerService.getSellerByMobile(product.getSeller().getMobile(), token);
-        Optional<Seller> opt = sellerDao.findById(Existingseller.getSellerId());
+        Optional<Seller> optionalSeller = sellerDao.findById(Existingseller.getSellerId());
 
-        if (opt.isPresent()) {
-            Seller seller = opt.get();
+        if (optionalSeller.isPresent()) {
+            Seller seller = optionalSeller.get();
 
             product.setSeller(seller);
 
@@ -52,14 +52,13 @@ public class ProductServiceImpl implements ProductService {
 
         } else {
             product1 = productDao.save(product);
-            ;
         }
 
         return product1;
     }
 
     @Override
-    public Product getProductFromCatalogById(Integer id) throws ProductNotFoundException {
+    public Product getProductFromCatalogById(Long id) throws ProductNotFoundException {
 
         Optional<Product> opt = productDao.findById(id);
         if (opt.isPresent()) {
@@ -71,11 +70,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public String deleteProductFromCatalog(Integer id) throws ProductNotFoundException {
-        Optional<Product> opt = productDao.findById(id);
+    public String deleteProductFromCatalog(Long id) throws ProductNotFoundException {
+        Optional<Product> optionalProduct = productDao.findById(id);
 
-        if (opt.isPresent()) {
-            Product prod = opt.get();
+        if (optionalProduct.isPresent()) {
+            Product prod = optionalProduct.get();
             System.out.println(prod);
             productDao.delete(prod);
             return "Product deleted from catalog";
@@ -85,13 +84,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProductInCatalog(Product prod) throws ProductNotFoundException {
+    public Product updateProductInCatalog(Product product) throws ProductNotFoundException {
 
-        Optional<Product> opt = productDao.findById(prod.getProductId());
+        Optional<Product> optionalProduct = productDao.findById(product.getProductId());
 
-        if (opt.isPresent()) {
-            opt.get();
-            return productDao.save(prod);
+        if (optionalProduct.isPresent()) {
+            optionalProduct.get();
+            return productDao.save(product);
         } else
             throw new ProductNotFoundException("Product not found with given id");
     }
@@ -145,27 +144,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProductQuantityWithId(Long id, ProductDto prodDTO) {
-        return null;
-    }
+    public Product updateProductQuantityWithId(Long id, ProductDto productDto) {
+        Product product = null;
+        Optional<Product> optionalProduct = productDao.findById(id);
 
-    @Override
-    public Product updateProductQuantityWithId(Long id, ProductDto prodDto) {
-        Product prod = null;
-        Optional<Product> opt = productDao.findById(id);
-
-        if(opt.isPresent()) {
-            prod = opt.get();
-            prod.setQuantity(prod.getQuantity()+prodDto.getQuantity());
-            if(prod.getQuantity()>0) {
-                prod.setStatus(ProductStatus.AVAILABLE);
+        if(optionalProduct.isPresent()) {
+            product = optionalProduct.get();
+            product.setQuantity(product.getQuantity() + productDto.getQuantity());
+            if(product.getQuantity()>0) {
+                product.setStatus(ProductStatus.AVAILABLE);
             }
-            productDao.save(prod);
+            productDao.save(product);
 
         }
         else
             throw new ProductNotFoundException("No product found with this Id");
 
-        return prod;
+        return product;
     }
 }

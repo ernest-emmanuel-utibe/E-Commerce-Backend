@@ -15,10 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -37,13 +34,9 @@ public class CustomerServiceImpl implements CustomerService {
 
         customer.setCreatedOn(LocalDateTime.now());
 
-        Cart c = new Cart();
+        Cart cart = new Cart();
 
-        System.out.println(c);
-
-//		System.out.println(c.getProducts().size());
-
-        customer.setCustomerCart(c);
+        customer.setCustomerCart(cart);
 
         customer.setOrders(new ArrayList<Order>());
 
@@ -64,7 +57,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer getLoggedInCustomerDetails(String token){
 
-        if(token.contains("customer") == false) {
+        if(!token.contains("customer")) {
             throw new LoginException("Invalid session token for customer");
         }
 
@@ -72,22 +65,18 @@ public class CustomerServiceImpl implements CustomerService {
 
         UserSession user = sessionDao.findByToken(token).get();
 
-        Optional<Customer> opt = customerDao.findById(user.getUserId());
+        Optional<Customer> optionalCustomer = customerDao.findById(user.getUserId());
 
-        if(opt.isEmpty())
+        if(optionalCustomer.isEmpty())
             throw new CustomerNotFoundException("Customer does not exist");
 
-        Customer existingCustomer = opt.get();
-
-        return existingCustomer;
+        return optionalCustomer.get();
     }
 
     @Override
     public List<Customer> getAllCustomers(String token) throws CustomerNotFoundException {
 
-        // update to seller
-
-        if(token.contains("seller") == false) {
+        if(!token.contains("seller")) {
             throw new LoginException("Invalid session token.");
         }
 
@@ -95,7 +84,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         List<Customer> customers = customerDao.findAll();
 
-        if(customers.size() == 0)
+        if(customers.isEmpty())
             throw new CustomerNotFoundException("No record exists");
 
         return customers;
@@ -104,8 +93,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer updateCustomer(CustomerUpdateDto customer, String token) throws CustomerNotFoundException {
 
-
-        if(token.contains("customer") == false) {
+        if(!token.contains("customer")) {
             throw new LoginException("Invalid session token for customer");
         }
 
@@ -120,14 +108,11 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer existingCustomer = null;
 
-        if(opt.isPresent())
-            existingCustomer = opt.get();
-        else
-            existingCustomer = res.get();
+        existingCustomer = opt.orElseGet(res::get);
 
         UserSession user = sessionDao.findByToken(token).get();
 
-        if(existingCustomer.getCustomerId() == user.getUserId()) {
+        if(Objects.equals(existingCustomer.getCustomerId(), user.getUserId())) {
 
             if(customer.getFirstName() != null) {
                 existingCustomer.setFirstName(customer.getFirstName());
