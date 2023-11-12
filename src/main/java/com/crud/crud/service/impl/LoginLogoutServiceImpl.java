@@ -82,7 +82,7 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
     }
 
 
-    // Method to logout a customer
+    // Method to log out a customer
 
     @Override
     public SessionDto logoutCustomer(SessionDto sessionToken) {
@@ -93,14 +93,14 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 
         Optional<UserSession> opt = sessionDao.findByToken(token);
 
-        if(!opt.isPresent())
+        if(opt.isEmpty())
             throw new LoginException("User not logged in. Invalid session token. Login Again.");
 
         UserSession session = opt.get();
 
         sessionDao.delete(session);
 
-        sessionToken.setMessage("Logged out sucessfully.");
+        sessionToken.setMessage("Logged out successfully.");
 
         return sessionToken;
     }
@@ -118,7 +118,6 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
                 sessionDao.delete(session);
                 flag = true;
             }
-
             deleteExpiredTokens();
             if(flag)
                 throw new LoginException("Session expired. Login Again");

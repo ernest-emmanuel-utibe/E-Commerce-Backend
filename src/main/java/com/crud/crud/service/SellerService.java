@@ -12,7 +12,7 @@ public interface SellerService {
 
     public List<Seller> getAllSellers() throws SellerException;
 
-    public Seller getSellerById(Integer sellerId)throws SellerException;
+    public Seller getSellerById(Long sellerId)throws SellerException;
 
     public Seller getSellerByMobile(String mobile, String token) throws SellerException;
 
@@ -24,5 +24,5 @@ public interface SellerService {
 
     public Seller updateSellerMobile(SellerDto sellerdto, String token)throws SellerException;
 
-    public Seller deleteSellerById(Integer sellerId, String token)throws SellerException;
+    public Seller deleteSellerById(Long sellerId, String token)throws SellerException;
 }

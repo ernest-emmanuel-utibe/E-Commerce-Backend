@@ -75,8 +75,6 @@ public class OrderServiceImpl implements OrderService {
                             cartItem.getCartProduct().setStatus(ProductStatus.OUTOFSTOCK);
                         }
                     }
-                    cartService.clearCart(token);
-                    return orderDao.save(newOrder);
                 }
                 else {
                     System.out.println("Not same");
@@ -84,10 +82,10 @@ public class OrderServiceImpl implements OrderService {
                     newOrder.setAddress(loggedInCustomer.getAddress().get(orderDto.getAddressType()));
                     newOrder.setDate(LocalDate.now());
                     newOrder.setOrderStatus(OrderStatusValue.PENDING);
-                    cartService.clearCart(token);
-                    return orderDao.save(newOrder);
 
                 }
+                cartService.clearCart(token);
+                return orderDao.save(newOrder);
             }
             else {
                 throw new OrderException("No products in Cart");

@@ -52,7 +52,7 @@ public class OrderController {
     }
 
     @PutMapping("/orders/{orderId}")
-    public ResponseEntity<Order> updateOrderByOrder(@Valid @RequestBody OrderDto orderdto, @PathVariable("orderId") Integer orderId,@RequestHeader("token") String token){
+    public ResponseEntity<Order> updateOrderByOrder(@Valid @RequestBody OrderDto orderdto, @PathVariable("orderId") Long orderId,@RequestHeader("token") String token){
 
         Order updatedOrder= orderService.updateOrderByOrder(orderdto,orderId,token);
 

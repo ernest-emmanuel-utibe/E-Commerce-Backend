@@ -51,7 +51,7 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public Seller getSellerById(Integer sellerId) {
+    public Seller getSellerById(Long sellerId) {
 
         Optional<Seller> seller=sellerDao.findById(sellerId);
 
@@ -76,7 +76,7 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public Seller deleteSellerById(Integer sellerId, String token) {
+    public Seller deleteSellerById(Long sellerId, String token) {
 
         if(token.contains("seller") == false) {
             throw new LoginException("Invalid session token for seller");

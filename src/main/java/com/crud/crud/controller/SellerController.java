@@ -48,7 +48,7 @@ public class SellerController {
 
 
     @GetMapping("/seller/{sellerId}")
-    public ResponseEntity<Seller> getSellerByIdHandler(@PathVariable("sellerId") Integer Id){
+    public ResponseEntity<Seller> getSellerByIdHandler(@PathVariable("sellerId") Long Id){
 
         Seller getSeller=sellerService.getSellerById(Id);
 
@@ -96,7 +96,7 @@ public class SellerController {
 
 
     @DeleteMapping("/seller/{sellerId}")
-    public ResponseEntity<Seller> deleteSellerByIdHandler(@PathVariable("sellerId") Integer Id, @RequestHeader("token") String token){
+    public ResponseEntity<Seller> deleteSellerByIdHandler(@PathVariable("sellerId") Long Id, @RequestHeader("token") String token){
 
         Seller deletedSeller=sellerService.deleteSellerById(Id, token);
 
