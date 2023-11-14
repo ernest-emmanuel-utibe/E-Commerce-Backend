@@ -26,24 +26,17 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
-//    @Autowired
+
     private final CartDao cartDao;
 
-//    @Autowired
     private final SessionDao sessionDao;
 
-//    @Autowired
     private final CartItemService cartItemService;
 
-
-//    @Autowired
     private final CustomerDao customerDao;
 
-//    @Autowired
     private final LoginLogoutService loginService;
 
-
-//    @Autowired
     private final ProductDao productDao;
 
 
