@@ -13,9 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CartItemServiceImpl implements CartItemService {
-//    @Autowired
-    private final ProductDao productDao;
 
+    private final ProductDao productDao;
 
     @Override
     public CartItem createItemForCart(CartDto cartdto) {
